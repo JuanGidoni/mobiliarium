@@ -4,8 +4,7 @@ export function Header() {
   return (
     <header className="main-header">
       <div className="container">
-        <h1 className="title">Nombre de la app</h1>
-
+        <h1 className="title">Perritex</h1>
         <nav>
           <ul className="nav-list">
             <li>
@@ -13,16 +12,9 @@ export function Header() {
                 Home
               </Link>
             </li>
-
             <li>
-              <Link className="nav-link" to="/categoria/animales">
+              <Link className="nav-link" to="/categorias">
                 Categorías
-              </Link>
-            </li>
-
-            <li>
-              <Link className="nav-link" to="/filtros">
-                Filtros
               </Link>
             </li>
           </ul>
