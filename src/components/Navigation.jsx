@@ -9,16 +9,9 @@ const Navigation = () => {
             Home
           </Link>
         </li>
-
         <li>
-          <Link className="nav-link" to="/categoria/animales">
+          <Link className="nav-link" to="/categorias">
             Categorías
-          </Link>
-        </li>
-
-        <li>
-          <Link className="nav-link" to="/filtros">
-            Filtros
           </Link>
         </li>
       </ul>
