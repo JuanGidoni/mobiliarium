@@ -1,21 +1,36 @@
-name: Check PR Base Branch
+# .github/workflows/fix-base-if-main.yml
+name: Auto-change PR base to develop if targeting main
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  contents: read
 
 jobs:
-  check-base:
+  rebase-pr:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code (requerido para que gh funcione correctamente)
-        uses: actions/checkout@v3
-
-      - name: Check and change base branch if targeting main
-        if: github.event.pull_request.base.ref == 'main'
+      - name: Install GitHub CLI
         run: |
-          echo "⚠️ PR #${{ github.event.pull_request.number }} targets 'main'. Changing base to 'develop'..."
-          gh pr edit ${{ github.event.pull_request.number }} --base develop
+          sudo apt update
+          sudo apt install -y gh
+
+      - name: Check and change MR base if needed
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          BASE_BRANCH=${{ github.event.pull_request.base.ref }}
+
+          echo "PR #$PR_NUMBER is targeting $BASE_BRANCH"
+
+          if [ "$BASE_BRANCH" = "main" ]; then
+            echo "⚠️ PR targets 'main'. Changing base to 'develop'..."
+            gh pr edit "$PR_NUMBER" --base develop
+            echo "✅ Base branch updated to 'develop'"
+          else
+            echo "✅ PR does not target 'main', no action needed."
+          fi
