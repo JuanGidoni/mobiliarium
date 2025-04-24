@@ -68,12 +68,13 @@ jobs:
           issue-number: ${{ steps.create_pr.outputs.number }}
           body: "⚠️ Existen conflictos entre `main` y `develop`. Resuélvelos manualmente."
 
-      - name: Merge PR automatically if no conflicts
+      - name: Aprobar PR automáticamente si no hay conflictos
         if: env.conflict == 'false'
-        uses: peter-evans/approve-pull-request@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pull-request-number: ${{ steps.create_pr.outputs.number }}
+        run: |
+          pr_number=${{ steps.create_pr.outputs.number }}
+          pr_url="https://api.github.com/repos/${{ github.repository }}/pulls/${pr_number}/reviews"
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -d '{"event": "APPROVE"}' $pr_url
 
       - name: Merge PR to develop after approval
         if: env.conflict == 'false'
