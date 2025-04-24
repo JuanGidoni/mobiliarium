@@ -1,0 +1,46 @@
+name: Auto-change PR base to develop if targeting main
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  rebase-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Git and GitHub CLI
+        run: |
+          sudo apt update
+          sudo apt install -y git gh
+
+      - name: Authenticate with GitHub CLI
+        run: gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Check PR base and change if needed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          BASE_BRANCH=${{ github.event.pull_request.base.ref }}
+          HEAD_BRANCH=${{ github.event.pull_request.head.ref }}
+
+          echo "PR #$PR_NUMBER is targeting $BASE_BRANCH and coming from $HEAD_BRANCH"
+
+          # Si el PR está dirigido desde develop hacia main, lo dejamos pasar sin cambios
+          if [ "$BASE_BRANCH" = "main" ] && [ "$HEAD_BRANCH" != "develop" ]; then
+            echo "⚠️ PR targets 'main' from a branch other than 'develop'. Changing base to 'develop'..."
+            gh pr edit "$PR_NUMBER" --base develop
+            echo "✅ Base branch updated to 'develop'"
+          else
+            echo "✅ PR is either targeting 'develop' or is from 'develop' to 'main', no action needed."
+          fi
