@@ -1,32 +1,27 @@
-const js = require("@eslint/js");
-const jestPlugin = require("eslint-plugin-jest");
-const globals = require("globals");
-const reactHooks = require("eslint-plugin-react-hooks");
-const reactRefresh = require("eslint-plugin-react-refresh");
-
 module.exports = [
   {
-    ignores: ["dist", "build", "node_modules"], // Ignorar estas carpetas
+    ignores: ["dist", "build", "node_modules"],
   },
   {
-    files: ["**/*.{js,jsx}"], // Aplicar configuración a todos los archivos .js y .jsx
+    files: ["**/*.{js,jsx}"],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: {
+        ...require("globals").browser,
+        jest: true,
+      },
       parserOptions: {
         ecmaVersion: "latest",
         ecmaFeatures: { jsx: true },
         sourceType: "module",
       },
     },
-    plugins: {
-      "react-hooks": reactHooks,
-      "react-refresh": reactRefresh,
-      jest: jestPlugin,
-    },
+    plugins: [
+      "react-hooks",
+      "react-refresh",
+      "jest",
+    ],
     rules: {
-      ...js.configs.recommended.rules,
-      ...reactHooks.configs.recommended.rules,
       "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
       "react-refresh/only-export-components": [
         "warn",
