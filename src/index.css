@@ -29,7 +29,19 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
-
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: rgb(0, 0, 0);
+  color: white;
+  text-align: center;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .main-header {
   text-align: start;
   background-color: #0e70c088;
