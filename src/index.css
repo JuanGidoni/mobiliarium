@@ -44,10 +44,9 @@ body {
 }
 .main-header {
   text-align: start;
-  display: flex;
-  background-color: #868adb;
-  color: rgb(36, 116, 185);
-  padding: 3rem;
+  background-color: #0e70c088;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 .container {
   max-width: 1200px;
@@ -60,11 +59,14 @@ body {
 
 .title {
   font-size: 1.5 rem;
+  font-weight: bold;
+  color: #fff;
 }
 
-.nav-list {
+.nav {
   display: flex;
   gap: 2rem;
+
   color: rgb(193, 219, 241);
 }
 
