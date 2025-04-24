@@ -1,4 +1,3 @@
-# .github/workflows/fix-base-if-main.yml
 name: Auto-change PR base to develop if targeting main
 
 on:
@@ -12,11 +11,20 @@ permissions:
 jobs:
   rebase-pr:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Install GitHub CLI
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Git and GitHub CLI
         run: |
           sudo apt update
-          sudo apt install -y gh
+          sudo apt install -y git gh
+
+      - name: Authenticate with GitHub CLI
+        run: gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Check and change MR base if needed
         env:
