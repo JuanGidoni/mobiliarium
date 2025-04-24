@@ -3,8 +3,8 @@ export function Header() {
   return (
     <header className="main-header">
       <div className="container">
-        <h1 className="title">Perritex</h1>
-        <Navigation></Navigation>
+        <h1 className="title">Nombre de la app</h1>
+        <Navigation />
       </div>
     </header>
   );

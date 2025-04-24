@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # necesario para hacer merge correctamente
+          fetch-depth: 0 # Necesario para hacer merge correctamente
 
       - name: Set up Git
         run: |
@@ -47,8 +47,12 @@ jobs:
         if: steps.merge.outputs.conflict == 'true'
         run: exit 1
 
-      - name: Commit & push if merge is clean
+      - name: Commit & push if merge is clean and has changes
         if: steps.merge.outputs.conflict == 'false'
         run: |
-          git commit -m "Merged develop into ${{ github.head_ref }}"
-          git push origin HEAD:${{ github.head_ref }}
+          if git diff --cached --quiet; then
+            echo "✅ Merge limpio pero sin cambios. Nada que commitear."
+          else
+            git commit -m "Merged develop into ${{ github.head_ref }}"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
