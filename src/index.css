@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #459ce3;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -25,7 +25,42 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  place-items: start;
   min-width: 320px;
   min-height: 100vh;
+}
+
+.main-header {
+  text-align: start;
+  display: flex;
+  background-color: #868adb;
+  color: rgb(36, 116, 185);
+  padding: 3rem;
+}
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.5 rem;
+}
+
+.nav-list {
+  display: flex;
+  gap: 2rem;
+  color: rgb(193, 219, 241);
+}
+
+.nav-link {
+  color: rgb(193, 219, 241);
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: #a0aec0;
 }
