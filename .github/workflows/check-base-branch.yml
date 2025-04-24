@@ -26,19 +26,21 @@ jobs:
       - name: Authenticate with GitHub CLI
         run: gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Check and change MR base if needed
+      - name: Check PR base and change if needed
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
           BASE_BRANCH=${{ github.event.pull_request.base.ref }}
+          HEAD_BRANCH=${{ github.event.pull_request.head.ref }}
 
-          echo "PR #$PR_NUMBER is targeting $BASE_BRANCH"
+          echo "PR #$PR_NUMBER is targeting $BASE_BRANCH and coming from $HEAD_BRANCH"
 
-          if [ "$BASE_BRANCH" = "main" ]; then
-            echo "⚠️ PR targets 'main'. Changing base to 'develop'..."
+          # Si el PR está dirigido desde develop hacia main, lo dejamos pasar sin cambios
+          if [ "$BASE_BRANCH" = "main" ] && [ "$HEAD_BRANCH" != "develop" ]; then
+            echo "⚠️ PR targets 'main' from a branch other than 'develop'. Changing base to 'develop'..."
             gh pr edit "$PR_NUMBER" --base develop
             echo "✅ Base branch updated to 'develop'"
           else
-            echo "✅ PR does not target 'main', no action needed."
+            echo "✅ PR is either targeting 'develop' or is from 'develop' to 'main', no action needed."
           fi
