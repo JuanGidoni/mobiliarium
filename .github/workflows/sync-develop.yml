@@ -1,58 +1,86 @@
-name: Sync feature branch with develop
+name: Sync main to develop and Monitor Conflicts
 
 on:
-  pull_request:
-    branches: [develop]
-    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
 
 jobs:
-  sync-develop:
+  sync-main-to-develop:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout main and develop
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # Necesario para hacer merge correctamente
+          fetch-depth: 0
 
       - name: Set up Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Fetch develop
-        run: git fetch origin develop
-
-      - name: Attempt merge from develop into feature branch
-        id: merge
+      - name: Fetch branches
         run: |
-          git checkout ${{ github.head_ref }}
-          if ! git merge origin/develop --no-commit --no-ff; then
-            echo "conflict=true" >> $GITHUB_OUTPUT
-          else
-            echo "conflict=false" >> $GITHUB_OUTPUT
-          fi
+          git fetch origin main
+          git fetch origin develop
 
-      - name: Comment on PR if conflict
-        if: steps.merge.outputs.conflict == 'true'
+      - name: Create a sync branch
+        run: |
+          git checkout develop
+          git pull origin develop
+          git checkout -b sync-main-to-develop
+
+      - name: Merge main into sync branch
+        run: |
+          set -e
+          git merge origin/main --no-ff --no-commit || true
+          if ! git diff --cached --quiet; then
+            git commit -m "Sync main into develop"
+            git push origin sync-main-to-develop
+          else
+            echo "No changes to commit. Skipping push."
+
+      - name: Create PR to develop
+        id: create_pr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Sync main to develop"
+          body: "This PR syncs the latest changes from `main` into `develop`."
+          base: develop
+          head: sync-main-to-develop
+
+      - name: Check for merge conflicts in the PR
+        id: check_conflicts
+        run: |
+          pr_url="https://api.github.com/repos/${{ github.repository }}/pulls/${{ steps.create_pr.outputs.pull_number }}"
+          pr_data=$(curl -s $pr_url)
+          if echo "$pr_data" | grep -q '"mergeable": false'; then
+            echo "conflict=true" >> $GITHUB_ENV
+          else
+            echo "conflict=false" >> $GITHUB_ENV
+
+      - name: Comment if there are merge conflicts
+        if: env.conflict == 'true'
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ⚠️ Merge fallido: hay **conflictos** entre `develop` y `${{ github.head_ref }}`.  
-            Por favor, resuelve los conflictos manualmente para continuar.
+          issue-number: ${{ steps.create_pr.outputs.pull_number }}
+          body: "⚠️ There are merge conflicts between `main` and `develop`. Please resolve them manually."
 
-      - name: Abort if conflict
-        if: steps.merge.outputs.conflict == 'true'
-        run: exit 1
-
-      - name: Commit & push if merge is clean and has changes
-        if: steps.merge.outputs.conflict == 'false'
+      - name: Approve PR if no conflicts
+        if: env.conflict == 'false'
         run: |
-          if git diff --cached --quiet; then
-            echo "✅ Merge limpio pero sin cambios. Nada que commitear."
-          else
-            git commit -m "Merged develop into ${{ github.head_ref }}"
-            git push origin HEAD:${{ github.head_ref }}
-          fi
+          pr_number=${{ steps.create_pr.outputs.pull_number }}
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{"event": "APPROVE"}' \
+            https://api.github.com/repos/${{ github.repository }}/pulls/${pr_number}/reviews
+
+      - name: Merge PR to develop
+        if: env.conflict == 'false'
+        run: |
+          pr_number=${{ steps.create_pr.outputs.pull_number }}
+          curl -X PUT -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d '{"commit_title": "Merge main into develop"}' \
+            https://api.github.com/repos/${{ github.repository }}/pulls/${pr_number}/merge
