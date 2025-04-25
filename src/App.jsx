@@ -1,5 +1,6 @@
 import "./App.css";
-import AppRoutes from "./routes/AppRoutes";
+import { Header } from "./components/header/Header.jsx";
+import { Footer } from "./components/Footer";
 
 function App() {
   return <AppRoutes />;
