@@ -1,6 +1,6 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import Header from "src/header/Header.jsx";
+import Header from "./Header";
 
 describe("Header Component", () => {
   test("renders without crashing", () => {
