@@ -1,20 +1,12 @@
-import { Routes, Route } from "react-router-dom";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import HomePage from "../pages/HomePage.jsx";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { routes } from "./routes.jsx";
 
+const router = createBrowserRouter(routes, {
+  basename: import.meta.env.BASE_URL,
+});
 
 function AppRoutes() {
-  return (
-    <>
-      <Header />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/categories" element={<div>Categories</div>} />
-      </Routes>
-      <Footer />
-    </>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default AppRoutes;
