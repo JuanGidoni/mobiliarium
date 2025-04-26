@@ -1,7 +1,6 @@
-import logoImg from "/src/assets/Logo.png";
+import logoImg from "../../assets/Logo.png";
 import Navigation from "../navigation/Navigation.jsx";
 import "./Header.css";
-import "/src/index.css";
 
 export function Header() {
   return (
