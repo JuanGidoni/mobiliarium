@@ -1,13 +1,12 @@
+import ErrorPage from "../components/error/ErrorPage";
+import Layout from "../layouts/Layout";
 import HomePage from "../pages/home/HomePage";
-// import SubHomePage from "../pages/home/subhome/SubHomePage";
 
 export const routes = [
   {
     path: "/",
-    element: <HomePage />,
+    element: <Layout />,
+    errorElement: <ErrorPage />,
+    children: [{ path: "", element: <HomePage /> }],
   },
-  // {
-  //   path: "/sub/:id",
-  //   element: <SubHomePage />,
-  // },
 ];
