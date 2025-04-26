@@ -13,8 +13,8 @@ export default [
     languageOptions: {
       ecmaVersion: 2020,
       globals: {
-        ...globals.browser, // globals de navegador
-        ...globals.vitest, // AÑADE los globals de Vitest
+        ...globals.browser,
+        ...globals.vitest,
       },
       parserOptions: {
         ecmaVersion: "latest",
