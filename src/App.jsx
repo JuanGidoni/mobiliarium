@@ -1,14 +1,7 @@
-import "./App.css";
-import { Header } from "./components/Header.jsx";
-import { Footer } from "./components/Footer";
+import AppRoutes from "./routes/AppRoutes";
 
-function App() {
-  return (
-    <>
-      <Header />
-      <Footer />
-    </>
-  );
-}
+const App = () => {
+  return <AppRoutes />;
+};
 
 export default App;
