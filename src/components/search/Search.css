@@ -1,0 +1,29 @@
+.search-container {
+  background: #0e70c088;
+  font-family: "Raleway", sans-serif;
+  margin-bottom: 16px;
+  padding: 16px;
+  display: flex;
+  justify-content: left;
+}
+
+.search-input {
+  font-family: "Raleway", sans-serif;
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 1em;
+  transition: border-color 0.3s ease;
+}
+
+search-input:focus {
+  border-color: #7265ec;
+}
+
+@media (max-widtg: 480px) {
+  .search-input {
+    width: 100%;
+  }
+}

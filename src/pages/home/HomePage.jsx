@@ -1,8 +1,31 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useHomePageLogic } from "./useHomePageLogic";
+import ProductCard from "../../components/productCard/ProductCard";
+import Filter from "../../components/filter/Filter";
+import Search from "../../components/search/Search";
+import "./HomePage.css";
+
+const categories = [
+  "activitats-virtuals",
+  "rutes-i-visites",
+  "dansa",
+  "concerts",
+  "teatre",
+  "exposicions",
+  "conferencies",
+  "infantil",
+  "festivals-i-mostres",
+];
 
 const HomePage = () => {
-  const { data, status, error, loadItems } = useHomePageLogic();
+  const {
+    status,
+    error,
+    loadItems,
+    filteredMuseums,
+    handleFilterChange,
+    handleSearch,
+  } = useHomePageLogic();
 
   useEffect(() => {
     loadItems();
@@ -12,13 +35,20 @@ const HomePage = () => {
   if (status === "failed") return <p>Error: {error}</p>;
 
   return (
-    <div>
-      <h1>All Items</h1>
-      <ul>
-        {data.map((item, index) => (
-          <li key={index}>{item.codi}</li>
+    <div className="homepage">
+      <Search onSearch={handleSearch} />
+      <Filter categories={categories} onFilterChange={handleFilterChange} />
+      <div className="container grid">
+        {filteredMuseums.map((museum, index) => (
+          <ProductCard
+            key={index}
+            image={`https://agenda.cultura.gencat.cat${museum.imgapp}`}
+            title={museum.denominaci}
+            description={museum.descripcio}
+            link={museum.enllac1_url}
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

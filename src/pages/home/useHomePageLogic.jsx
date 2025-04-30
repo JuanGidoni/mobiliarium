@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 import {
   fetchItems,
   fetchItemById,
@@ -12,6 +13,12 @@ export const useHomePageLogic = () => {
   const data = useSelector((state) => state.items.data);
   const status = useSelector((state) => state.items.status);
   const error = useSelector((state) => state.items.error);
+
+  const [filteredMuseums, setFilteredMuseums] = useState([]);
+
+  useEffect(() => {
+    setFilteredMuseums(data);
+  }, [data]);
 
   // Load all items
   const loadItems = () => {
@@ -33,6 +40,28 @@ export const useHomePageLogic = () => {
     dispatch(clearItems());
   };
 
+  // Handle filter change
+  const handleFilterChange = (filters) => {
+    const { categories } = filters;
+    if (categories.length > 0) {
+      loadItemsByCategory(categories);
+    } else {
+      loadItems();
+    }
+  };
+
+  // Handle search
+  const handleSearch = (query) => {
+    const lowercasedQuery = query.toLowerCase();
+    const newFilteredMuseums = data.filter(
+      (museum) =>
+        museum.denominaci.toLowerCase().includes(lowercasedQuery) ||
+        museum.descripcio.toLowerCase().includes(lowercasedQuery) ||
+        museum.tags_categor_es.toLowerCase().includes(lowercasedQuery)
+    );
+    setFilteredMuseums(newFilteredMuseums);
+  };
+
   return {
     data,
     status,
@@ -41,5 +70,8 @@ export const useHomePageLogic = () => {
     loadItemById,
     loadItemsByCategory,
     clear,
+    filteredMuseums,
+    handleFilterChange,
+    handleSearch,
   };
 };
