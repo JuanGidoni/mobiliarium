@@ -72,6 +72,7 @@ jobs:
           git push origin version-bump-branch
 
       - name: Create a Pull Request to main
+        id: pr
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -83,7 +84,9 @@ jobs:
 
       - name: Auto-merge PR if no conflicts
         run: |
-          gh pr merge --merge --auto "Bump version to v$VERSION"
+          PR_URL="${{ steps.pr.outputs.pull-request-url }}"
+          PR_ID=$(echo $PR_URL | grep -oP '#\d+')
+          gh pr merge $PR_ID --merge --auto
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
