@@ -1,7 +1,37 @@
 import "./Button.css";
+import PropTypes from "prop-types";
 
-const Button = ({ text, className }) => {
-  return <button className={`button ${className}`}>{text}</button>;
+const Button = ({ text, onClick, type, variant, disabled, className }) => {
+  const buttonClass = `button ${variant ? `button-${variant}` : ""} ${
+    disabled ? "button-disabled" : ""
+  } ${className}`;
+
+  return (
+    <button
+      type={type}
+      className={buttonClass}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {text}
+    </button>
+  );
+};
+
+Button.PropTypes = {
+  text: PropTypes.string.isRequired,
+  onclick: PropTypes.func,
+  type: PropTypes.oneOf(["button", "submit", "reset"]),
+  variant: PropTypes.oneOf(["primary", "secondary"]),
+  disabled: PropTypes.bool,
+  className: PropTypes.string,
+};
+
+Button.defaultProps = {
+  type: "button",
+  variant: "primary",
+  disabled: false,
+  className: "",
 };
 
 export default Button;
