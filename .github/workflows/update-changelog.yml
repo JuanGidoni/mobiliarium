@@ -31,7 +31,7 @@ jobs:
       - name: Install git-cliff
         uses: taiki-e/install-action@v2
         with:
-          tool: git-cliff@2.7.0 
+          tool: git-cliff@2.7.0  # Install git-cliff to generate changelog
 
       - name: Generate changelog
         run: |
@@ -57,4 +57,5 @@ jobs:
           delete-branch: false
 
       - name: Verify PR creation
-        run: echo "Pull Request created successfully."
+        run: |
+          echo "Pull Request created successfully."
