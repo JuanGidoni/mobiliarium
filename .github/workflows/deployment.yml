@@ -49,18 +49,17 @@ jobs:
           tool: git-cliff@2.7.0
 
       - name: Generate changelog
-        uses: orhun/git-cliff-action@v4
-        with:
-          config: cliff.toml
-          args: --verbose
+        run: |
+          git-cliff -o CHANGELOG.md
         env:
-          OUTPUT: CHANGELOG.md
           GITHUB_REPO: ${{ github.repository }}
 
       - name: Create a temporary branch for changes
         run: |
+          git fetch origin
           git checkout -b version-bump-branch
-          git push origin version-bump-branch
+          git pull origin version-bump-branch  # Pull the latest changes from the remote branch
+          git push origin version-bump-branch  # Now push the local changes
 
       - name: Create a Pull Request to main
         uses: peter-evans/create-pull-request@v4
