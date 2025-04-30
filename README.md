@@ -84,3 +84,5 @@ Feel free to fork the repository and create pull requests. For bug fixes, featur
 ## License
 
 This project is licensed under the MIT License.
+
+This README will be updated without notice.
