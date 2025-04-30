@@ -1,0 +1,64 @@
+# .github/workflows/deploy.yml
+
+name: Deploy to GitHub Pages
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+    # Trigger only when PR is merged into `main`.
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for "ready to deploy" comment
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          COMMENTS_URL="https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments"
+          COMMENT_FOUND=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$COMMENTS_URL" | grep -i "ready to deploy")
+          if [ -z "$COMMENT_FOUND" ]; then
+            echo "No 'ready to deploy' comment found. Skipping deployment."
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
+      - name: Mark Deployment as Finished
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/deployments/${{ steps.deploy.outputs.deployment_id }}/statuses \
+            -d '{"state": "success", "environment_url": "https://juangidoni.github.io/mobiliarium", "description": "Deployment to GitHub Pages completed successfully."}'
