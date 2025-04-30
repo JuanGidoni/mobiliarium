@@ -55,21 +55,20 @@ jobs:
           git add CHANGELOG.md
           git commit -m "docs: update changelog for v$VERSION"
 
-      - name: Push version bump and changelog
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+      - name: Create a temporary branch for changes
+        run: |
+          git checkout -b version-bump-branch
+          git push origin version-bump-branch
 
-      - name: Create GitHub Release draft
-        uses: softprops/action-gh-release@v1
+      - name: Create a Pull Request to main
+        uses: peter-evans/create-pull-request@v4
         with:
-          tag_name: v${{ env.VERSION }}
-          name: v${{ env.VERSION }}
-          body_path: CHANGELOG.md
-          draft: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: bump version to v$VERSION"
+          title: "Bump version to v$VERSION"
+          body: "This PR bumps the version and updates the changelog for v$VERSION."
+          base: main
+          branch: version-bump-branch
 
       - name: Build the project
         run: npm run build
