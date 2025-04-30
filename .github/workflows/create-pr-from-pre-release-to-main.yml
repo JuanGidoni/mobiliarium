@@ -1,9 +1,9 @@
-name: Create PR from pre-release to main
+name: Create PR from develop to main
 
 on:
   push:
     branches:
-      - pre-release
+      - develop
 
 jobs:
   create-pr-to-main:
@@ -15,17 +15,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check if pre-release branch exists
+      - name: Check if develop branch exists
         run: git branch -r
 
-      - name: Create PR from pre-release to main
+      - name: Create PR from develop to main
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Merge pre-release to main"
-          body: "This PR merges the changes from pre-release to main after validation."
+          title: "Merge develop to main"
+          body: "This PR merges the changes from develop to main after validation."
           base: main
-          branch: pre-release
+          branch: develop
           delete-branch: false
           labels: 'ready for merge'
 

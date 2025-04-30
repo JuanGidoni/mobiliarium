@@ -1,4 +1,4 @@
-name: Auto Merge Pre-Release to Main
+name: Auto Merge develop to Main
 
 on:
   pull_request:
@@ -31,14 +31,14 @@ jobs:
       - name: Check if merge was successful
         if: steps.auto_merge.outcome != 'success'
         run: |
-          echo "Auto-merge failed, creating a new PR from pre-release to main."
+          echo "Auto-merge failed, creating a new PR from develop to main."
 
-      - name: Create fallback PR from pre-release to main
+      - name: Create fallback PR from develop to main
         if: steps.auto_merge.outcome != 'success'
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Auto PR: Merge pre-release to main"
+          title: "Auto PR: Merge develop to main"
           body: "This PR is created because the auto-merge failed."
           base: main
-          branch: pre-release
+          branch: develop
