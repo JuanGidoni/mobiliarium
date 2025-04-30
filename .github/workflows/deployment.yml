@@ -58,8 +58,8 @@ jobs:
         run: |
           git fetch origin
           git checkout -b version-bump-branch
-          git pull origin version-bump-branch  # Pull the latest changes from the remote branch
-          git push origin version-bump-branch  # Now push the local changes
+          git pull origin version-bump-branch --no-rebase  # Merge remote changes
+          git push origin version-bump-branch
 
       - name: Create a Pull Request to main
         uses: peter-evans/create-pull-request@v4
