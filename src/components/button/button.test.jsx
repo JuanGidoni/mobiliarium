@@ -1,7 +1,7 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
 import Button from "./Button";
-import { describe, expect } from "vitest";
+import { describe, expect, vi } from "vitest";
 
 describe("Button Component", () => {
   it("renders without crashing", () => {
@@ -9,7 +9,7 @@ describe("Button Component", () => {
   });
 
   it("triggers onClick function when clicked", () => {
-    const handleClick = jest.fn();
+    const handleClick = vi.fn();
     const { getByText } = render(
       <Button text="Click me" onClick={handleClick} />
     );

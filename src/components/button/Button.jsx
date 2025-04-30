@@ -1,5 +1,5 @@
-import "./Button.css";
 import PropTypes from "prop-types";
+import "./Button.css";
 
 const Button = ({ text, onClick, type, variant, disabled, className }) => {
   const buttonClass = `button ${variant ? `button-${variant}` : ""} ${
@@ -18,9 +18,9 @@ const Button = ({ text, onClick, type, variant, disabled, className }) => {
   );
 };
 
-Button.PropTypes = {
+Button.propTypes = {
   text: PropTypes.string.isRequired,
-  onclick: PropTypes.func,
+  onClick: PropTypes.func,
   type: PropTypes.oneOf(["button", "submit", "reset"]),
   variant: PropTypes.oneOf(["primary", "secondary"]),
   disabled: PropTypes.bool,
