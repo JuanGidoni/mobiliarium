@@ -31,7 +31,7 @@ This directory contains the pages related to the categories of the application. 
      ```
 
 2. **Category Detail Page (`/categories/concerts`):**
-   - Displays a list of events related to the "Concerts" category.
+   - Displays a list of events related to the "Concerts" category. It has filters inside each category.
    - Example events:
      ```
      - Rock Concert in Barcelona
@@ -45,6 +45,3 @@ This directory contains the pages related to the categories of the application. 
 
 ## Notes
 
-- Ensure that the routes are correctly configured in the `routes.jsx` file.
-- Category data is fetched using the `getByCategory` function from the `api.js` service.
-- You can add more categories or filters as needed.
