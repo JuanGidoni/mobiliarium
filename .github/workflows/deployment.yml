@@ -44,31 +44,30 @@ jobs:
           git commit -m "chore: bump version to $VERSION"
 
       - name: Install git-cliff
-        run: |
-          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-x86_64-unknown-linux-gnu.tar.gz | tar xz
-          sudo mv git-cliff /usr/local/bin/
-
-      - name: Generate CHANGELOG.md
-        run: |
-          git-cliff -o CHANGELOG.md --tag v$VERSION
-          git add CHANGELOG.md
-          git commit -m "docs: update changelog for v$VERSION"
-
-      - name: Push version bump and changelog
-        uses: ad-m/github-push-action@v0.6.0
+        uses: taiki-e/install-action@v2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main
+          version: 'v2.8.0'
 
-      - name: Create GitHub Release draft
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v${{ env.VERSION }}
-          name: v${{ env.VERSION }}
-          body_path: CHANGELOG.md
-          draft: true
+      - name: Generate changelog
+        run: |
+          git-cliff -o CHANGELOG.md
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO: ${{ github.repository }}
+
+      - name: Create a temporary branch for changes
+        run: |
+          git checkout -b version-bump-branch
+          git push origin version-bump-branch
+
+      - name: Create a Pull Request to main
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: bump version to v$VERSION"
+          title: "Bump version to v$VERSION"
+          body: "This PR bumps the version and updates the changelog for v$VERSION."
+          base: main
+          branch: version-bump-branch
 
       - name: Build the project
         run: npm run build
@@ -96,36 +95,5 @@ jobs:
             https://api.github.com/repos/${{ github.repository }}/deployments/${{ steps.deploy.outputs.deployment_id }}/statuses \
             -d '{"state": "success", "environment_url": "https://juangidoni.github.io/mobiliarium", "description": "Deployment to GitHub Pages completed successfully."}'
 
-      # 🆕 Install git-cliff
-      - name: Install git-cliff
-        run: |
-          curl -sSL https://github.com/orhun/git-cliff/releases/download/v1.3.0/git-cliff-x86_64-unknown-linux-gnu.tar.gz | tar -xz
-          sudo mv git-cliff /usr/local/bin/
-
-      # 🆕 Generate CHANGELOG.md
-      - name: Generate Changelog
-        run: |
-          git fetch --tags
-          git-cliff -o CHANGELOG.md
-
-      # 🆕 Commit and push CHANGELOG.md
-      - name: Commit and push changelog
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add CHANGELOG.md
-          git commit -m "chore: update changelog [skip ci]" || echo "No changes to commit"
-          git push origin main
-
-      # 🆕 Create GitHub Release Draft
-      - name: Create GitHub Release draft
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v${{ github.run_number }}
-          name: Release v${{ github.run_number }}
-          draft: true
-          body_path: CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cleanup
+        run: rm -rf dist
