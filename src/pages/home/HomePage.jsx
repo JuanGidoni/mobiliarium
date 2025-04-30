@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useHomePageLogic } from "./useHomePageLogic";
-import ProductCard from "./ProductCard";
-import Filter from "./Filter";
-import Search from "./Search";
+import ProductCard from "../../components/productCard/ProductCard";
+import Filter from "../../components/filter/Filter";
+import Search from "../../components/search/Search";
 import "./HomePage.css";
 
 const categories = [
