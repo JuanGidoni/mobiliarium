@@ -1,9 +1,9 @@
-name: Validate develop to pre-release
+name: Validate develop to release it
 
 on:
   pull_request:
     branches:
-      - pre-release
+      - develop
 
 jobs:
   validate:
