@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import "./Filter.css";
 
-function Filter({ categories, priceRanges, onFilterChange }) {
+function Filter({ categories, onFilterChange }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
-
-  const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
 
   const handleCategoryChange = (category) => {
     setSelectedCategories((prev) =>
@@ -13,18 +11,10 @@ function Filter({ categories, priceRanges, onFilterChange }) {
         : [...prev, category]
     );
   };
-  const handlePriceRangeChange = (priceRange) => {
-    setSelectedPriceRanges((prev) =>
-      prev.includes(priceRange)
-        ? prev.filter((item) => item !== priceRange)
-        : [...prev, priceRange]
-    );
-  };
 
   const applyFilters = () => {
     onFilterChange({
       categories: selectedCategories,
-      priceRanges: selectedPriceRanges,
     });
   };
 
@@ -39,17 +29,6 @@ function Filter({ categories, priceRanges, onFilterChange }) {
             onChange={() => handleCategoryChange(category)}
           />
           {category}
-        </label>
-      ))}
-      <h3>Filter by Price Range</h3>
-      {priceRanges.map((priceRange) => (
-        <label key={priceRange}>
-          <input
-            type="checkbox"
-            value={priceRange}
-            onChange={() => handlePriceRangeChange(priceRange)}
-          />
-          {priceRange}
         </label>
       ))}
       <button onClick={applyFilters}>Apply Filters</button>

@@ -34,6 +34,11 @@
   font-size: 1em;
   color: #4f4f4f;
   margin: 8px 0;
+  /*  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical; */
   text-align: left;
   padding-left: 15px;
 }
