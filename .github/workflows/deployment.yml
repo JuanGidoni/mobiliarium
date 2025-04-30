@@ -33,6 +33,38 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build the project
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
+  version-bump:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Bump version (patch)
         run: |
           npm version patch --no-git-tag-version
@@ -56,23 +88,10 @@ jobs:
 
       - name: Create a temporary branch for changes
         run: |
-          # Ensure we are on the main branch
-          git checkout main
-          
-          # Fetch the latest changes from the remote
-          git fetch origin main
-          
-          # Merge remote changes into the local branch
-          git merge origin/main --no-edit
-          
-          # Create a new branch for version bump
           git checkout -b version-bump-branch
-          
-          # Push the new branch to the remote
           git push origin version-bump-branch
 
       - name: Create a Pull Request to main
-        id: pr
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -82,39 +101,34 @@ jobs:
           base: main
           branch: version-bump-branch
 
-      - name: Auto-merge PR if no conflicts
-        run: |
-          PR_URL="${{ steps.pr.outputs.pull-request-url }}"
-          PR_ID=$(echo $PR_URL | grep -oP '#\d+')
-          gh pr merge $PR_ID --merge --auto
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  sync-main-to-develop:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    needs: version-bump
 
-      - name: Build the project
-        run: npm run build
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+    steps:
+      - name: Checkout main and develop
+        uses: actions/checkout@v3
         with:
-          path: './dist'
+          fetch-depth: 0
 
-      - name: Deploy to GitHub Pages
-        id: deploy
-        uses: actions/deploy-pages@v4
-
-      - name: Mark Deployment as Finished
-        if: always()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Configure Git
         run: |
-          curl -X POST \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/deployments/${{ steps.deploy.outputs.deployment_id }}/statuses \
-            -d '{"state": "success", "environment_url": "https://juangidoni.github.io/mobiliarium", "description": "Deployment to GitHub Pages completed successfully."}'
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Cleanup
-        run: rm -rf dist
+      - name: Fetch all branches
+        run: |
+          git fetch origin main
+          git fetch origin develop
+
+      - name: Create PR to sync main → develop
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Sync main into develop"
+          title: "🔄 Sync main to develop"
+          body: "This PR merges the latest changes from `main` into `develop`."
+          base: develop
+          branch: sync/main-to-develop
+          delete-branch: true
