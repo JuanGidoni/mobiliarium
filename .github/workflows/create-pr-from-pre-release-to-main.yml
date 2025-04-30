@@ -12,6 +12,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if pre-release branch exists
+        run: git branch -r
 
       - name: Create PR from pre-release to main
         uses: peter-evans/create-pull-request@v4
@@ -22,3 +27,5 @@ jobs:
           base: main
           branch: pre-release
           delete-branch: false
+          labels: 'ready for merge'
+
