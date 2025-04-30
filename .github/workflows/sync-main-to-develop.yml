@@ -1,4 +1,4 @@
-name: Sync Main to Develop
+name: Sync main to develop
 
 on:
   workflow_run:
@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout main and develop
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 

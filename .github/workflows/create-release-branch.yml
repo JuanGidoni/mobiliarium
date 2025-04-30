@@ -1,0 +1,22 @@
+name: Create Release Branch
+
+on:
+  push:
+    branches:
+      - main  # Trigger on main updates, could be adjusted based on your process
+
+jobs:
+  create-release-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create release branch
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          git checkout -b release/${VERSION}
+          git push origin release/${VERSION}
