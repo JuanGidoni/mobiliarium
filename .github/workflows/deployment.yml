@@ -56,10 +56,20 @@ jobs:
 
       - name: Create a temporary branch for changes
         run: |
-          git checkout main   # Ensure we're on the main branch
-          git pull origin main  # Fetch the latest changes
-          git checkout -b version-bump-branch  # Create a new branch for the version bump
-          git push origin version-bump-branch  # Push the new branch to the remote
+          # Ensure we are on the main branch
+          git checkout main
+          
+          # Fetch the latest changes from the remote
+          git fetch origin main
+          
+          # Merge remote changes into the local branch
+          git merge origin/main --no-edit
+          
+          # Create a new branch for version bump
+          git checkout -b version-bump-branch
+          
+          # Push the new branch to the remote
+          git push origin version-bump-branch
 
       - name: Create a Pull Request to main
         uses: peter-evans/create-pull-request@v4
