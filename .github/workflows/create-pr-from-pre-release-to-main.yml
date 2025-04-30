@@ -1,0 +1,24 @@
+name: Create PR from pre-release to main
+
+on:
+  push:
+    branches:
+      - pre-release/*  # Ejecutar cuando se hace push a pre-release
+
+jobs:
+  create-pr-to-main:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create PR from pre-release to main
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Merge pre-release/${{ github.ref_name }} to main"
+          body: "This PR merges the changes from pre-release to main after validation."
+          base: main
+          branch: pre-release/${{ github.ref_name }}
+          delete-branch: false

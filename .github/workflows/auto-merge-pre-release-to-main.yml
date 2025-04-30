@@ -33,7 +33,7 @@ jobs:
         run: |
           echo "Auto-merge failed, creating a new PR from pre-release to main."
 
-      - name: Create a fallback PR from pre-release to main
+      - name: Create fallback PR from pre-release to main
         if: steps.auto_merge.outcome != 'success'
         uses: peter-evans/create-pull-request@v4
         with:
