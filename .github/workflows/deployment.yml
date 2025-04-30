@@ -44,27 +44,15 @@ jobs:
           git commit -m "chore: bump version to $VERSION"
 
       - name: Install git-cliff
+        uses: taiki-e/install-action@v2
+        with:
+          version: 'v2.8.0'
+
+      - name: Generate changelog
         run: |
-          # Download the latest git-cliff release
-          curl -sL "https://github.com/orhun/git-cliff/releases/download/v2.8.0/git-cliff-2.8.0-x86_64-unknown-linux-gnu.tar.gz" -o git-cliff.tar.gz
-          
-          # Extract the tar.gz file
-          tar -xzf git-cliff.tar.gz
-
-          # Move the git-cliff binary to the appropriate location
-          sudo mv git-cliff*/git-cliff /usr/local/bin/
-
-          # Clean up: Remove the tar.gz file and extracted folder
-          rm -rf git-cliff* git-cliff.tar.gz
-
-      - name: Generate CHANGELOG.md
-        run: |
-          # Generate the changelog using git-cliff and the current version
-          git-cliff -o CHANGELOG.md --tag v$VERSION
-          
-          # Add and commit the CHANGELOG.md to the repo
-          git add CHANGELOG.md
-          git commit -m "docs: update changelog for v$VERSION"
+          git-cliff -o CHANGELOG.md
+        env:
+          GITHUB_REPO: ${{ github.repository }}
 
       - name: Create a temporary branch for changes
         run: |
