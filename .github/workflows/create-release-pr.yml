@@ -1,4 +1,4 @@
-name: Create Pre-Release PR from Develop to Pre-Release Branch
+name: Create Pre-Release PR from Develop
 
 on:
   push:
@@ -7,18 +7,16 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  create-release-pr:
+  create-pr:
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
-      
+    
     steps:
       - name: Checkout develop branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Get the latest tag (current version)
+      - name: Get current version tag
         id: get_version
         run: |
           CURRENT_VERSION=$(git describe --tags --abbrev=0 || echo "v0.0.0")
@@ -33,15 +31,14 @@ jobs:
 
       - name: Create pre-release branch
         run: |
-          git checkout -b pre-release/${VERSION}
-          git push origin pre-release/${VERSION}
+          git checkout -b pre-release/${{ env.VERSION }}
+          git push origin pre-release/${{ env.VERSION }}
 
-      - name: Create PR from develop to pre-release branch
+      - name: Create PR from develop to pre-release
         uses: peter-evans/create-pull-request@v4
         with:
-          token: ${{ secrets.GH_BOT_TOKEN }}
-          title: "Pre-Release ${VERSION} - Prepare release"
-          body: "This PR prepares the release ${VERSION} from `develop` to `pre-release`."
-          base: pre-release/${VERSION}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Pre-Release ${{ env.VERSION }} - Prepare release"
+          body: "This PR prepares the release ${{ env.VERSION }} from `develop` to `pre-release`."
+          base: pre-release/${{ env.VERSION }}
           branch: develop
-          delete-branch: false

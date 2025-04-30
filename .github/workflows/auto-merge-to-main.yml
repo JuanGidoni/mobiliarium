@@ -1,0 +1,44 @@
+name: Auto Merge Pre-Release to Main
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize]
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == 'false'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Git configuration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Attempt to auto-merge the PR
+        id: auto_merge
+        run: |
+          set +e
+          gh pr merge ${{ github.event.pull_request.number }} --merge --auto
+          echo "Merge status: $?"
+        continue-on-error: true
+
+      - name: Check if merge was successful
+        if: steps.auto_merge.outcome != 'success'
+        run: |
+          echo "Auto-merge failed, creating a new PR from pre-release to main."
+
+      - name: Create a fallback PR from pre-release to main
+        if: steps.auto_merge.outcome != 'success'
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Auto PR: Merge pre-release/${{ github.event.pull_request.head.ref }} to main"
+          body: "This PR is created because the auto-merge failed."
+          base: main
+          branch: pre-release/${{ github.event.pull_request.head.ref }}
