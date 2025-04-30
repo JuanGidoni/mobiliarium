@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Filter.css";
-
+import Button from "../button/Button";
 function Filter({ categories, onFilterChange }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
 
@@ -31,7 +31,7 @@ function Filter({ categories, onFilterChange }) {
           {category}
         </label>
       ))}
-      <button onClick={applyFilters}>Apply Filters</button>
+      <Button text="Apply Filters" onClick={applyFilters} />
     </div>
   );
 }
