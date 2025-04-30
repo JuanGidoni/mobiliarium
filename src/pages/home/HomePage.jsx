@@ -42,7 +42,7 @@ const HomePage = () => {
         {filteredMuseums.map((museum, index) => (
           <ProductCard
             key={index}
-            image={museum.imgapp}
+            image={`https://agenda.cultura.gencat.cat${museum.imgapp}`}
             title={museum.denominaci}
             description={museum.descripcio}
             link={museum.enllac1_url}
