@@ -62,6 +62,7 @@ jobs:
           git push origin version-bump-branch
 
       - name: Create a Pull Request to main
+        id: pr
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -70,6 +71,14 @@ jobs:
           body: "This PR bumps the version and updates the changelog for v$VERSION."
           base: main
           branch: version-bump-branch
+
+      - name: Auto merge PR if no conflicts
+        uses: peter-evans/auto-merge@v2
+        with:
+          pull-request-number: ${{ steps.pr.outputs.pull-request-number }}
+          merge-method: squash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build the project
         run: npm run build
@@ -85,6 +94,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
+        if: github.event.pull_request == null  # Skip deployment for changelog-only PRs
 
       - name: Mark Deployment as Finished
         if: always()
@@ -96,6 +106,14 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }}/deployments/${{ steps.deploy.outputs.deployment_id }}/statuses \
             -d '{"state": "success", "environment_url": "https://juangidoni.github.io/mobiliarium", "description": "Deployment to GitHub Pages completed successfully."}'
+
+      - name: Sync develop branch
+        run: |
+          git checkout develop
+          git pull origin develop
+          git merge main
+          git push origin develop
+        if: github.event.pull_request == null  # Only sync if no PR merge
 
       - name: Cleanup
         run: rm -rf dist
