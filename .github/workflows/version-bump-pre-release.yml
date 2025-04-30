@@ -3,8 +3,8 @@ name: Version bump and changelog for pre-release
 on:
   pull_request:
     branches:
-      - pre-release/*  # Ejecutar cuando se fusiona una PR a pre-release
-    types: [closed]  # Solo cuando la PR es cerrada (fusionada)
+      - pre-release
+    types: [closed]
 
 jobs:
   bump-version-and-changelog:
@@ -40,7 +40,7 @@ jobs:
           git add CHANGELOG.md
           git add package.json package-lock.json  # O archivos equivalentes
           git commit -m "chore: bump version and update changelog"
-          git push origin HEAD:pre-release/${{ github.event.pull_request.head.ref }}
+          git push origin HEAD:pre-release  # Hace el push directo a pre-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

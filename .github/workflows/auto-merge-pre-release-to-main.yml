@@ -38,7 +38,7 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: "Auto PR: Merge pre-release/${{ github.event.pull_request.head.ref }} to main"
+          title: "Auto PR: Merge pre-release to main"
           body: "This PR is created because the auto-merge failed."
           base: main
-          branch: pre-release/${{ github.event.pull_request.head.ref }}
+          branch: pre-release
