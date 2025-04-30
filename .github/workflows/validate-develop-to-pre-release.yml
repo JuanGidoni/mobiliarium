@@ -1,0 +1,35 @@
+name: Validate develop to pre-release
+
+on:
+  pull_request:
+    branches:
+      - pre-release/*  # Ejecutar cuando se crea o actualiza una PR a pre-release
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run build, lint, and test
+        run: |
+          npm run build
+          npm run lint
+          npm test
+
+      - name: Comment PR "Ready to merge"
+        if: success()  # Solo si las validaciones son exitosas
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "✅ Ready to merge!"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
