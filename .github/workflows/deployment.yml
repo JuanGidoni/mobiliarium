@@ -70,13 +70,11 @@ jobs:
           base: main
           branch: version-bump-branch
 
-      - name: Auto merge PR if no conflicts
-        uses: peter-evans/auto-merge@v1
-        with:
-          pull-request-number: ${{ steps.pr.outputs.pull-request-number }}
-          merge-method: squash
+      - name: Enable Pull Request Automerge
+        run: |
+          gh pr merge ${{ steps.pr.outputs.pull-request-number }} --merge --auto
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build the project
         run: npm run build
