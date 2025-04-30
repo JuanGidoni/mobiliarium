@@ -1,0 +1,56 @@
+name: Bump Version & Changelog PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  bump-and-validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Bump version and generate changelog
+        run: |
+          # Bump the version
+          VERSION=$(npm version patch --no-git-tag-version)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+          # Generate the changelog using git-cliff
+          git-cliff -o CHANGELOG.md
+          git add CHANGELOG.md package.json package-lock.json
+          git commit -m "chore: bump version to v$VERSION and update changelog"
+
+      - name: Run validations
+        run: |
+          # Run tests or any necessary validation
+          npm run test
+
+      - name: Add 'Ready to Deploy' comment
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"body": "Ready to deploy!"}' \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments"
+
+      - name: Push changes with version bump and changelog
+        run: |
+          git push origin HEAD:${{ github.head_ref }}

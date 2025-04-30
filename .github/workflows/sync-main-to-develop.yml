@@ -1,13 +1,10 @@
-# .github/workflows/sync-main-to-develop.yml
-
-name: Sync main to develop
+name: Sync Main to Develop
 
 on:
   workflow_run:
     workflows: ["Deploy to GitHub Pages"]
     types:
       - completed
-    # This will trigger the workflow when the "Deploy to GitHub Pages" workflow completes.
 
 jobs:
   sync-main-to-develop:
@@ -15,22 +12,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch all commits to avoid potential issues with history.
+          fetch-depth: 0
 
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Fetch All Branches
+      - name: Fetch all branches
         run: |
           git fetch origin main
           git fetch origin develop
 
-      - name: Create Pull Request to Sync main → develop
+      - name: Create PR to sync main → develop
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -40,4 +37,3 @@ jobs:
           base: develop
           branch: sync/main-to-develop
           delete-branch: true
-          # Automatically delete the branch after the PR is merged.
