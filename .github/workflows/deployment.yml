@@ -56,11 +56,12 @@ jobs:
 
       - name: Create a temporary branch for changes
         run: |
-          git checkout -b version-bump-branch
-          git push origin version-bump-branch
+          git checkout main   # Ensure we're on the main branch
+          git pull origin main  # Fetch the latest changes
+          git checkout -b version-bump-branch  # Create a new branch for the version bump
+          git push origin version-bump-branch  # Push the new branch to the remote
 
       - name: Create a Pull Request to main
-        id: pr
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -70,9 +71,9 @@ jobs:
           base: main
           branch: version-bump-branch
 
-      - name: Enable Pull Request Automerge
+      - name: Auto-merge PR if no conflicts
         run: |
-          gh pr merge ${{ steps.pr.outputs.pull-request-number }} --merge --auto
+          gh pr merge --merge --auto "Bump version to v$VERSION"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
