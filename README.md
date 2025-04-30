@@ -77,10 +77,6 @@ REACT_APP_API_KEY=your-api-key
   /assets            - Static assets like images or icons.
 ```
 
-## Contributing
-
-Feel free to fork the repository and create pull requests. For bug fixes, feature requests, or any other changes, make sure to open an issue in the GitHub repository.
-
 ## License
 
 This project is licensed under the MIT License.
