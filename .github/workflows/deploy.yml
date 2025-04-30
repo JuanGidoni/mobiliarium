@@ -1,42 +1,143 @@
-name: Deploy to GitHub Pages
+name: Release Pipeline
 
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
-
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-  pull-requests: write
-  deployments: write
+      - develop
+  workflow_dispatch: {}
 
 jobs:
-  deploy:
+  # Step 1: Create a release branch and PR from develop to the release branch
+  create-release-pr:
     runs-on: ubuntu-latest
-
+    env:
+      GH_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+      
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout develop branch
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set up Node.js
+      - name: Get the latest tag (current version)
+        id: get_version
+        run: |
+          CURRENT_VERSION=$(git describe --tags --abbrev=0 || echo "v0.0.0")
+          echo "CURRENT_VERSION=$CURRENT_VERSION" >> $GITHUB_ENV
+
+      - name: Calculate next version
+        id: next_version
+        run: |
+          IFS='.' read -r MAJOR MINOR PATCH <<< "${CURRENT_VERSION#v}"
+          NEXT_VERSION="v$MAJOR.$MINOR.$((PATCH + 1))"
+          echo "VERSION=$NEXT_VERSION" >> $GITHUB_ENV
+
+      - name: Create release branch
+        run: |
+          git checkout -b release/${VERSION}
+          git push origin release/${VERSION}
+
+      - name: Create PR from develop to release branch
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GH_BOT_TOKEN }}
+          title: "Release ${VERSION} - Prepare release"
+          body: "This PR prepares the release ${VERSION} from `develop`."
+          base: release/${VERSION}
+          branch: develop
+          delete-branch: false
+
+  # Step 2: Bump version, generate changelog, and commit changes
+  bump-version-and-changelog:
+    runs-on: ubuntu-latest
+    needs: create-release-pr
+    env:
+      GH_TOKEN: ${{ secrets.GH_BOT_TOKEN }}
+      
+    steps:
+      - name: Checkout release branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git configuration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Install git-cliff for changelog generation
+        uses: taiki-e/install-action@v2
+        with:
+          tool: git-cliff@2.7.0
+
+      - name: Generate changelog
+        run: |
+          git-cliff -o CHANGELOG.md
+        env:
+          GITHUB_REPO: ${{ github.repository }}
+
+      - name: Bump version in package files
+        run: |
+          # Update version in package.json or other files that contain versioning information
+          sed -i "s/\"version\": \".*\"/\"version\": \"${{ env.VERSION }}\"/" package.json
+
+      - name: Commit changes
+        run: |
+          git add CHANGELOG.md package.json
+          git commit -m "Bump version to ${{ env.VERSION }} and update changelog"
+          git push origin release/${{ env.VERSION }}
+
+  # Step 3: Deploy after merging into main
+  deploy:
+    runs-on: ubuntu-latest
+    needs: bump-version-and-changelog
+    if: github.event.pull_request.merged == 'true' && github.base_ref == 'main'
+    environment: production
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up deployment environment
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: '16'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build the project
-        run: npm run build
-
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
-
-      - name: Mark Deployment as Finished
+      - name: Deploy to production
         run: |
-          echo "Deployment completed successfully."
+          # Example deploy script
+          npm run build
+          npm run deploy
+
+  # Step 4: Sync main to develop after successful deployment
+  sync-main-to-develop:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.event.pull_request.merged == 'true' && github.base_ref == 'main'
+    steps:
+      - name: Checkout main and develop branches
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch all branches
+        run: |
+          git fetch origin main
+          git fetch origin develop
+
+      - name: Create PR to sync main → develop
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GH_BOT_TOKEN }}
+          commit-message: "Sync main into develop"
+          title: "🔄 Sync main to develop"
+          body: "This PR merges the latest changes from `main` into `develop`."
+          base: develop
+          branch: sync/main-to-develop
+          delete-branch: true
