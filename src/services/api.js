@@ -57,7 +57,7 @@ export async function getByCategory(categories) {
           .map((cat) => `agenda:categories/${encodeURIComponent(cat)}`)
           .join(",")
       : `agenda:categories/${encodeURIComponent(categories)}`;
-    const url = `${BASE_URL}?tags_categor_es=${categoryFilter}`;
+    const url = `${BASE_URL}?$limit=25&tags_categor_es=${categoryFilter}`;
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(
