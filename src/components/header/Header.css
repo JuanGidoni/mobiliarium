@@ -1,12 +1,13 @@
 /* HEADER */
 
 .main-header {
+  font-family: "Bahnschrift Light", sans-serif;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   text-align: start;
-  background-color: #0e70c088;
+  background-color: #277da1;
   height: 9.6rem;
   padding: 0 4.8rem;
   width: 100%;
@@ -35,14 +36,14 @@
 }
 
 .title {
+  font-family: "Bahnschrift Semibold", sans-serif;
   font-size: 1.5 rem;
-  font-weight: bold;
   color: #fff;
   transition: color 0.3s;
 }
 
 .title:hover {
-  color: #f77300;
+  color: #90be6d;
 }
 
 @media (max-width: 768px) {

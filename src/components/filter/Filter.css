@@ -1,6 +1,8 @@
 .filter-container {
-  font-family: "Raleway", sans-serif;
-  background: #0e70c088;
+  font-family: "Bahnschrift Light", sans-serif;
+  background: #277da1;
+
+  font-size: 1.5em;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 16px;
@@ -9,7 +11,7 @@
 
 .filter-container h3 {
   margin-bottom: 8px;
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   padding-top: 5px;
   font-weight: bold;
   color: #fff;
@@ -23,9 +25,11 @@
 }
 
 .filter-container button {
-  background: #1b24d3f9;
-  color: #fff;
+  font-size: 1.2rem;
+  background: #f9c74f;
+  color: #577590;
   border: none;
+  font-weight: bold;
   border-radius: 4px;
   padding: 8px 16px;
   cursor: pointer;
@@ -34,5 +38,6 @@
 
 .filter-container button:hover,
 .filter-container button:active {
-  background: #0e19f388;
+  background: #90be6d;
+  color: #fff;
 }
