@@ -2,7 +2,7 @@ import ErrorPage from "../components/error/ErrorPage";
 import Layout from "../layouts/Layout";
 import HomePage from "../pages/home/HomePage";
 import CategoriesPage from "../pages/categories/CategoriesPage";
-//import CategoryDetailPage from "../pages/categories//categorydetails/CategoryDetailPage";
+import CategoryDetailPage from "../pages/categories/categorydetails/CategoryDetailPage";
 
 export const routes = [
   {
@@ -19,7 +19,6 @@ export const routes = [
       { path: "", element: <CategoriesPage /> },
     ],
   },
-  /*
   {
     path: "/categories/:category",
     element: <Layout />,
@@ -27,5 +26,5 @@ export const routes = [
     children: [
       { path: "", element: <CategoryDetailPage /> }, 
     ],
-  }*/
+  }
 ];
