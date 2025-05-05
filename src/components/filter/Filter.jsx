@@ -2,10 +2,10 @@ import React from "react";
 import useFilterLogic from "./useFilterLogic";
 import "./Filter.css";
 import Button from "../button/Button";
-function Filter({ categories, onFilterChange }) {
+
+function Filter({ categories, onFilterChange,headerText = "Filter by Category"  }) {
   const { selectedCategories, handleCategoryChange, getSelectedCategories } =
     useFilterLogic();
-
   const applyFilters = () => {
     onFilterChange({
       categories: getSelectedCategories(),
@@ -14,7 +14,7 @@ function Filter({ categories, onFilterChange }) {
 
   return (
     <div className="filter-container">
-      <h3>Filter by Category</h3>
+      <h3>{headerText}</h3>
       {categories.map((category) => (
         <label key={category}>
           <input
