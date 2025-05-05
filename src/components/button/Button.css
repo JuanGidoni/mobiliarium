@@ -1,3 +1,33 @@
 .button {
-  padding: 1em;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.button-primary {
+  background-color: #0e19f388;
+  color: white;
+}
+
+.button-secondary {
+  background-color: #6c757d;
+}
+
+.button-disabled {
+  background-color: #d6d6d6;
+}
+
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+  .button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
 }

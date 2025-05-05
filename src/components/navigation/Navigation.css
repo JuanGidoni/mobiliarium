@@ -6,7 +6,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px;
-  background-color: #e87c00;
+  background-color: #90be6d;
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -29,14 +29,14 @@
   padding: 0;
   margin: 0;
 
-  color: rgb(193, 219, 241);
+  color: #fff;
 }
 
 .nav-link:link,
 .nav-link:visited {
   display: inline-block;
   text-decoration: none;
-  color: rgb(193, 219, 241);
+  color: #fff;
   font-weight: 500;
   font-size: 1rem;
   transition: all 0.3s;
@@ -44,7 +44,7 @@
 
 .nav-link:hover,
 .nav-link:active {
-  color: #a0aec0;
+  color: #277da1;
 }
 
 .nav-toggle {

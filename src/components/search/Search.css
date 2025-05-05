@@ -1,6 +1,6 @@
 .search-container {
-  background: #0e70c088;
-  font-family: "Raleway", sans-serif;
+  background: #277da1;
+  font-family: "Bahnschrift Light", sans-serif;
   margin-bottom: 16px;
   padding: 16px;
   display: flex;
@@ -8,7 +8,7 @@
 }
 
 .search-input {
-  font-family: "Raleway", sans-serif;
+  font-family: "Bahnschrift Light", sans-serif;
   width: 100%;
   max-width: 400px;
   padding: 8px 16px;

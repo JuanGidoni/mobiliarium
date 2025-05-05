@@ -33,42 +33,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Bump version (patch)
-        run: |
-          npm version patch --no-git-tag-version
-          VERSION=$(node -p "require('./package.json').version")
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add package.json package-lock.json
-          git commit -m "chore: bump version to $VERSION"
-
-      - name: Install git-cliff
-        uses: taiki-e/install-action@v2
-        with:
-          version: 'v2.8.0'
-
-      - name: Generate changelog
-        run: |
-          git-cliff -o CHANGELOG.md
-        env:
-          GITHUB_REPO: ${{ github.repository }}
-
-      - name: Create a temporary branch for changes
-        run: |
-          git checkout -b version-bump-branch
-          git push origin version-bump-branch
-
-      - name: Create a Pull Request to main
-        uses: peter-evans/create-pull-request@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: bump version to v$VERSION"
-          title: "Bump version to v$VERSION"
-          body: "This PR bumps the version and updates the changelog for v$VERSION."
-          base: main
-          branch: version-bump-branch
-
       - name: Build the project
         run: npm run build
 
