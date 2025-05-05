@@ -1,7 +1,14 @@
 import PropTypes from "prop-types";
 import "./Button.css";
 
-const Button = ({ text, onClick, type, variant, disabled, className }) => {
+const Button = ({
+  text = "Button",
+  onClick = () => {},
+  type = "button",
+  variant = "primary",
+  disabled = false,
+  className = "",
+}) => {
   const buttonClass = `button ${variant ? `button-${variant}` : ""} ${
     disabled ? "button-disabled" : ""
   } ${className}`;
@@ -25,13 +32,6 @@ Button.propTypes = {
   variant: PropTypes.oneOf(["primary", "secondary"]),
   disabled: PropTypes.bool,
   className: PropTypes.string,
-};
-
-Button.defaultProps = {
-  type: "button",
-  variant: "primary",
-  disabled: false,
-  className: "",
 };
 
 export default Button;

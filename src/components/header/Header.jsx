@@ -2,7 +2,7 @@ import logoImg from "../../assets/Logo.png";
 import Navigation from "../navigation/Navigation.jsx";
 import "./Header.css";
 
-export function Header() {
+export function Header({ onToggleSearch, onToggleFilter }) {
   return (
     <header className="main-header">
       <div className="header-container">
@@ -13,8 +13,12 @@ export function Header() {
         />
         <h1 className="title">Mobiliarium</h1>
       </div>
-
-      <Navigation />
+      {
+        <Navigation
+          onToggleSearch={onToggleSearch}
+          onToggleFilter={onToggleFilter}
+        />
+      }
     </header>
   );
 }

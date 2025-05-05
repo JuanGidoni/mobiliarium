@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useHomePageLogic } from "./useHomePageLogic";
 import ProductCard from "../../components/productCard/ProductCard";
 import Filter from "../../components/filter/Filter";
 import Search from "../../components/search/Search";
+import Header from "../../components/header/Header";
+import Button from "../../components/button/Button"; // Ensure Button is imported
 import "./HomePage.css";
 
 const categories = [
@@ -18,6 +20,9 @@ const categories = [
 ];
 
 const HomePage = () => {
+  const [showSearch, setShowSearch] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
+
   const {
     status,
     error,
@@ -36,8 +41,14 @@ const HomePage = () => {
 
   return (
     <div className="homepage">
-      <Search onSearch={handleSearch} />
-      <Filter categories={categories} onFilterChange={handleFilterChange} />
+      <Header
+        onToggleSearch={() => setShowSearch(!showSearch)}
+        onToggleFilter={() => setShowFilter(!showFilter)}
+      />
+      {showSearch && <Search onSearch={handleSearch} />}
+      {showFilter && (
+        <Filter categories={categories} onFilterChange={handleFilterChange} />
+      )}
       <div className="container grid">
         {filteredMuseums.map((museum, index) => (
           <ProductCard

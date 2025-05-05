@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Navigation.css";
 
-const Navigation = () => {
+const Navigation = ({ onToggleSearch, onToggleFilter }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -20,16 +20,16 @@ const Navigation = () => {
         <ul className="nav-list">
           <li>
             <Link className="nav-link" to="/categories">
-              Categorías
+              Categories
             </Link>
           </li>
           <li>
-            <Link className="nav-link" to="/filters">
+            <Link className="nav-link" to="#" onClick={onToggleFilter}>
               Filters
             </Link>
           </li>
           <li>
-            <Link className="nav-link" to="/search">
+            <Link className="nav-link" to="#" onClick={onToggleSearch}>
               Search
             </Link>
           </li>

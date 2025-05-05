@@ -6,7 +6,6 @@ import Footer from "../components/footer/Footer";
 const Layout = () => {
   return (
     <div>
-      <Header />
       <main className="content">
         <Outlet />
       </main>
