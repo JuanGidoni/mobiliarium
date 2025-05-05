@@ -1,5 +1,5 @@
 .product-card {
-  background-color: #0e70c088;
+  background-color: #277da1;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -21,18 +21,19 @@
 }
 
 .product-title {
-  font-family: "Raleway", sans-serif;
-  font-size: 1.4em;
+  font-family: "Bahnschrift SemiBold", sans-serif;
+  font-size: 2.2em;
   margin: 8px 0;
   padding-left: 15px;
   font-weight: bold;
-  color: #d2782a;
+  color: #90be6d;
 }
 
 .product-description {
-  font-family: "Raleway", sans-serif;
-  font-size: 1em;
-  color: #4f4f4f;
+  font-family: "Bahnschrift", sans-serif;
+  font-size: 1.6em;
+
+  color: #f9c74f;
   margin: 8px 0;
   /*  overflow: hidden;
   text-overflow: ellipsis;
@@ -44,10 +45,10 @@
 }
 
 .product-price {
-  font-family: "Raleway", sans-serif;
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #fff;
+  font-family: "Bahnschrift", sans-serif;
+  font-size: 1.6em;
+
+  color: #90be6d;
   margin: 8px 0x;
   padding-left: 15px;
   padding-bottom: 10px;
