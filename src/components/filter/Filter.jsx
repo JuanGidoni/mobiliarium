@@ -1,20 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
+import useFilterLogic from "./useFilterLogic";
 import "./Filter.css";
 import Button from "../button/Button";
-function Filter({ categories, onFilterChange,headerText = "Filter by Category" }) {
-  const [selectedCategories, setSelectedCategories] = useState([]);
-
-  const handleCategoryChange = (category) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((item) => item !== category)
-        : [...prev, category]
-    );
-  };
+function Filter({ categories, onFilterChange, headerText = "Filter by Category" }) {
+  const { selectedCategories, handleCategoryChange, getSelectedCategories } =
+    useFilterLogic();
 
   const applyFilters = () => {
     onFilterChange({
-      categories: selectedCategories,
+      categories: getSelectedCategories(),
     });
   };
 
@@ -27,6 +21,7 @@ function Filter({ categories, onFilterChange,headerText = "Filter by Category" }
             type="checkbox"
             value={category}
             onChange={() => handleCategoryChange(category)}
+            checked={selectedCategories.includes(category)}
           />
           {category}
         </label>

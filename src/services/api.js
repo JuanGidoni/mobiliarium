@@ -52,14 +52,12 @@ export async function getByCategory(categories) {
     );
   }
   try {
-    console.log(categories);
     const categoryFilter = Array.isArray(categories)
       ? categories
           .map((cat) => `agenda:categories/${encodeURIComponent(cat)}`)
           .join(",")
       : `agenda:categories/${encodeURIComponent(categories)}`;
     const url = `${BASE_URL}?$limit=25&tags_categor_es=${categoryFilter}`;
-    console.log(url);
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(
@@ -81,18 +79,12 @@ export async function getByField(categories,category) {
     );
   }
   try {
-    console.log(categories);
     const categoryFilter = Array.isArray(categories)
       ? categories
           .map((cat) => `${encodeURIComponent(cat)}`)
           .join(",")
       : `${encodeURIComponent(categories)}`;
-    
-    
-    console.log("cat",category);
     const url = `${BASE_URL}?$limit=25&tags_categor_es=agenda:categories/${category}&modalitat=${categoryFilter}`;
-    console.log(url);
-    console.log("api");
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(
