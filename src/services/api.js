@@ -73,3 +73,36 @@ export async function getByCategory(categories) {
     return { success: false, error: error.message };
   }
 }
+
+export async function getByField(categories,category) {
+  if (!categories || (Array.isArray(categories) && categories.length === 0)) {
+    throw new Error(
+      "Invalid fields provided. Must be a non-empty string or array."
+    );
+  }
+  try {
+    console.log(categories);
+    const categoryFilter = Array.isArray(categories)
+      ? categories
+          .map((cat) => `${encodeURIComponent(cat)}`)
+          .join(",")
+      : `${encodeURIComponent(categories)}`;
+    
+    
+    console.log("cat",category);
+    const url = `${BASE_URL}?$limit=25&tags_categor_es=agenda:categories/${category}&modalitat=${categoryFilter}`;
+    console.log(url);
+    console.log("api");
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch items by category: ${response.statusText}`
+      );
+    }
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    console.error("Error fetching items by category:", error);
+    return { success: false, error: error.message };
+  }
+}

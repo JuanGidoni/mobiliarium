@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllItems, getById, getByCategory } from "../../services/api";
+import { getAllItems, getById, getByCategory,getByField } from "../../services/api";
 
 export const fetchItems = createAsyncThunk(
   "items/fetchAll",
@@ -38,6 +38,24 @@ export const fetchItemsByCategory = createAsyncThunk(
   async (categories, thunkAPI) => {
     try {
       const response = await getByCategory(categories);
+      if (response.success) {
+        return response.data;
+      } else {
+        return thunkAPI.rejectWithValue(response.error);
+      }
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const fetchItemsByField = createAsyncThunk(
+  "items/fetchByField",
+  async ({ categories, category }, thunkAPI) => {
+    try {
+      console.log("cat1", category);
+      const response = await getByField(categories, category);
+      console.log("response", response);
       if (response.success) {
         return response.data;
       } else {
@@ -105,7 +123,22 @@ export const itemsSlice = createSlice({
       .addCase(fetchItemsByCategory.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+
+      //Fetch By Field
+      .addCase(fetchItemsByField.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchItemsByField.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.data = action.payload;
+      })
+      .addCase(fetchItemsByField.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
       });
+      
   },
 });
 

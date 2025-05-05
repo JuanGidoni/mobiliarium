@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Filter.css";
 import Button from "../button/Button";
-function Filter({ categories, onFilterChange }) {
+function Filter({ categories, onFilterChange,headerText = "Filter by Category" }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
 
   const handleCategoryChange = (category) => {
@@ -20,7 +20,7 @@ function Filter({ categories, onFilterChange }) {
 
   return (
     <div className="filter-container">
-      <h3>Filter by Category</h3>
+      <h3>{headerText}</h3>
       {categories.map((category) => (
         <label key={category}>
           <input

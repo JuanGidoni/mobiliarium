@@ -2,6 +2,12 @@ import { useEffect } from "react";
 import { useCategoryDetailPageLogic } from "./useCategoryDetailPageLogic";
 import ProductCard from "../../../components/productCard/ProductCard";
 import "./CategoryDetailPage.css";
+import Filter from "../../../components/filter/Filter";
+
+const ambits = [
+  "Presencial",
+  "Virtual",
+];
 
 const CategoryDetailPage = () => {
   const { 
@@ -9,7 +15,8 @@ const CategoryDetailPage = () => {
     status, 
     error, 
     data, 
-    loadCategoryItems 
+    handleFilterChange,
+    loadCategoryItems,
   } = useCategoryDetailPageLogic();
 
   useEffect(() => {
@@ -21,6 +28,7 @@ const CategoryDetailPage = () => {
 
 return (
     <div className="category-detail-page">
+        <Filter headerText="Filter by Field" categories={ambits} onFilterChange={handleFilterChange} />
         <h1>Category: {category.replace(/-/g, " ")}</h1>
         <p>Advanced filtering options will be available soon, including by date, scope, location, and more.</p>
         <div className="container grid">
