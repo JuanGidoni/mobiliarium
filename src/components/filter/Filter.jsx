@@ -2,10 +2,10 @@ import React from "react";
 import useFilterLogic from "./useFilterLogic";
 import "./Filter.css";
 import Button from "../button/Button";
-function Filter({ categories, onFilterChange, headerText = "Filter by Category" }) {
+
+function Filter({ categories, onFilterChange,headerText = "Filter by Category"  }) {
   const { selectedCategories, handleCategoryChange, getSelectedCategories } =
     useFilterLogic();
-
   const applyFilters = () => {
     onFilterChange({
       categories: getSelectedCategories(),
