@@ -1,10 +1,9 @@
-import React from "react";
 import "./ProductCard.css";
 import Image from "../image/Image";
 
-function ProductCard({ image, title, description, link }) {
+function ProductCard({ image, title, description, link, onClick }) {
   return (
-    <div className="product-card">
+    <div className="product-card" onClick={onClick}>
       <Image url={image} alt={title} className="product-image" />
       <h2 className="product-title">{title}</h2>
       <p className="product-description">{description}</p>
