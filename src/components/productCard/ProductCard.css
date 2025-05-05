@@ -5,10 +5,15 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
 }
 
 .product-card:hover {
   transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.product-card.expanded {
+  background-color: #f9f9f9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -35,11 +40,11 @@
 
   color: #f9c74f;
   margin: 8px 0;
-  /*  overflow: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 4;
-  -webkit-box-orient: vertical; */
+  -webkit-box-orient: vertical;
   text-align: left;
   padding-left: 15px;
 }
@@ -50,6 +55,15 @@
 
   color: #90be6d;
   margin: 8px 0x;
+  padding-left: 15px;
+  padding-bottom: 10px;
+}
+
+.product-link {
+  font-family: "Bahnschrift", sans-serif;
+  font-size: 1.6em;
+  color: #90be6d;
+  margin: 8px 0;
   padding-left: 15px;
   padding-bottom: 10px;
 }
